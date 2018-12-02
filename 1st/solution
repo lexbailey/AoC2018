@@ -1,0 +1,24 @@
+#!/usr/bin/env python3
+import sys
+from BTrees.OOBTree import OOSet
+
+data = list([int(i) for i in [s for s in sys.stdin.read().split('\n') if s != '']])
+
+print(sum(data))
+
+nums = OOSet()
+n = 0
+i = 0
+
+while True:
+    n = n + data[i]
+#    print(n)
+    i += 1
+    if i >= len(data):
+        i = 0
+
+    if n in nums:
+        print(n)
+        break
+
+    nums.insert(n)

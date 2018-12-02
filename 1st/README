@@ -1,0 +1,4 @@
+./initvenv
+./solution < input
+
+(where input is the file from the AoC site)
