@@ -1,0 +1,44 @@
+#!/usr/bin/env python3
+import sys
+
+ids = [s for s in sys.stdin.read().split('\n') if s != '']
+
+sorted_ids = [''.join(sorted(aid)) for aid in ids]
+
+twos = 0
+threes = 0
+
+for aid in sorted_ids:
+    prev = ''
+    n = 1
+    n2 = 0
+    n3 = 0
+    for c in aid:
+        if c == prev:
+            n += 1
+        else:
+            n = 1
+        if n == 2:
+            n2 += 1
+        if n == 3:
+            n2 -= 1
+            n3 += 1
+        prev = c
+
+    if n2 > 0:
+        twos += 1
+    if n3 > 0:
+        threes += 1
+
+print(twos*threes)
+
+for aid in ids:
+    diffs = [0] * len(ids)
+    for i, c in enumerate(aid):
+        for j, aid2 in enumerate(ids):
+            if aid2[i] != c:
+                diffs[j] += 1
+    if 1 in diffs:
+        print(aid)
+        print(ids[diffs.index(1)])
+        break
