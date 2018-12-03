@@ -1,0 +1,5 @@
+./initvenv
+source venv/bin/activate[.yourshell]
+./solution < input
+
+(where input is the file from the AoC site)

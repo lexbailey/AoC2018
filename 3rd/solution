@@ -1,0 +1,50 @@
+#!/usr/bin/env python3
+import sys
+import re
+from itertools import product
+from tqdm import tqdm
+import numpy as np
+
+claim_re = re.compile(r'#\d+ @ (\d+),(\d+): (\d+)x(\d+)')
+
+claims = [tuple(int(a) for a in claim_re.match(s).groups()) for s in sys.stdin.read().split('\n') if s != '']
+
+minx, miny, maxx, maxy = 9999999, 9999999, 0, 0
+for x, y, w, h in claims:
+    minx = min(minx, x)
+    miny = min(miny, y)
+    maxx = max(maxx, x+w)
+    maxy = max(maxy, y+h)
+
+fabric = np.zeros((maxx,maxy))
+
+for x, y, w, h in claims:
+    for u in range(w):
+        for v in range(h):
+            fabric[u+x][v+y] += 1
+
+count = 0
+for row in fabric:
+    for cell in row:
+        if cell > 1:
+            count += 1
+
+print(count)
+
+class BreakUpper(Exception):
+    pass
+
+for i, (x, y, w, h) in enumerate(claims):
+    clean = True
+    try:
+        for u in range(w):
+            for v in range(h):
+                clean &= fabric[u+x][v+y] == 1
+                if not clean:
+                    raise BreakUpper()
+        if clean:
+            print(i+1)
+            sys.exit(0)
+    except BreakUpper:
+        pass
+
