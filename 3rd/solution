@@ -2,7 +2,6 @@
 import sys
 import re
 from itertools import product
-from tqdm import tqdm
 import numpy as np
 
 claim_re = re.compile(r'#\d+ @ (\d+),(\d+): (\d+)x(\d+)')
