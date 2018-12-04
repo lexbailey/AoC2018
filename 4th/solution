@@ -1,0 +1,59 @@
+#!/usr/bin/env python3
+import sys
+import re
+from dateutil import parser
+from operator import itemgetter
+import numpy as np
+from math import floor
+
+np.set_printoptions(threshold=np.nan)
+
+event_re = re.compile(r'\[([^\]]+)\] (.*)')
+
+events = [event_re.match(s).groups() for s in sys.stdin.read().split('\n') if s != '']
+events = [(parser.parse(time), action) for time, action in events]
+
+events = sorted(events, key=itemgetter(0))
+
+def actioninfo(action):
+    if action == "wakes up":
+        return 'w'
+    elif action == "falls asleep":
+        return 'f'
+    else:
+        gid = int(re.match(r'Guard #(\d+).*', action).groups()[0])
+        return gid
+
+events = [(time, actioninfo(action)) for time, action in events]
+
+max_guard_id = 0
+
+for time, action in events:
+    if type(action) == int:
+        max_guard_id = max(max_guard_id, action)
+
+cur = None
+guards = np.zeros((max_guard_id+1, 60))
+fellat = None
+
+for time, action in events:
+    if action == "w":
+        start = fellat.minute
+        end = time.minute
+        #sleeptime = floor((time -fellat).seconds/60)
+        #print("sleep", sleeptime)
+        for i in range(start, end):
+            guards[cur][i] += 1
+    elif action == "f":
+        fellat = time
+    else:
+        cur = action
+
+totals = [sum(guard) for guard in guards]
+
+chosen_guard = np.argmax(totals)
+chosen_minute = np.argmax(guards[chosen_guard])
+print(chosen_guard * chosen_minute)
+chosen_index = np.argmax(guards)
+a,b = np.unravel_index([chosen_index], guards.shape)
+print(a[0]*b[0])
