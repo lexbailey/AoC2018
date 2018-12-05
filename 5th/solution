@@ -1,0 +1,36 @@
+#!/usr/bin/env python3
+import sys
+
+chain = sys.stdin.read().strip()
+
+def minimise(chain):
+    while True:
+        newchain = []
+
+        i = 0
+        len_before = len(chain)
+        while i < len_before:
+            try:
+                if chain[i] == chain[i+1].swapcase():
+                    i+=2
+                    continue
+            except IndexError:
+                pass
+            newchain.append(chain[i])
+            i+=1
+    
+        len_after = len(newchain)
+        if len_after == len_before:
+            break
+        chain = newchain
+    return len_after
+
+print(minimise(chain))
+
+all_chars = 'abcdefghijklmnopqrstuvwxyz'
+
+lengths = []
+for char in all_chars:
+    lengths.append(minimise(''.join(c for c in chain if c.lower() != char))) 
+
+print(min(lengths))
